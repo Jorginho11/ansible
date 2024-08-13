@@ -1,12 +1,20 @@
 ---
+- name: install zsh
+  include_tasks: zsh.yml
+  when: install_zsh == 'true'
+
 - name: include role tasks
   include_tasks: python.yml
-  when: install_python
+  when: install_python == 'true'
 
 - name: include role tasks
   include_tasks: node.yml
-  when: install_node
+  when: install_node == 'true' 
 
 - name: include role tasks
   include_tasks: nvim.yml
-  when: install_nvim 
+  when: install_nvim  == 'true'
+
+- name: include golang role
+  include_tasks: go.yml
+  when: install_go == 'true'

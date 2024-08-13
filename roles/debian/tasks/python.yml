@@ -1,25 +1,22 @@
-#- name: Install pyenv dependencies on Debian
-#  package:
-#    name:  "{{ item }}"
-#  loop:
-#    - make
-#    - build-essential
-#    - libssl-dev
-#    - zlib1g-dev
-#    - libbz2-dev
-#    - libreadline-dev
-#    - libsqlite3-dev
-#    - wget
-#    - curl
-#    - llvm
-#    - libncurses5-dev
-#    - libncursesw5-dev
-#    - xz-utils
-#    - tk-dev
-#    - libffi-dev
-#    - liblzma-dev
-#    - python3-openssl
-#    - git
+- name: Install pyenv dependencies on Debian
+  package:
+    name:  "{{ item }}"
+  loop:
+    - make
+    - build-essential
+    - libssl-dev
+    - zlib1g-dev
+    - libbz2-dev
+    - libreadline-dev
+    - libsqlite3-dev
+    - llvm
+    - libncurses5-dev
+    - libncursesw5-dev
+    - xz-utils
+    - tk-dev
+    - libffi-dev
+    - liblzma-dev
+    - python3-openssl
 
 - name: Install pyenv
   shell: |
@@ -44,3 +41,7 @@
     pyenv global {{ python_version }}
   args:
     creates: "{{ ansible_env.HOME }}/.pyenv/versions/{{ python_version }}"
+
+- name: Install virutalenv
+  shell: |
+    pip install -y virtualenv

@@ -1,18 +1,42 @@
-- name: Pull go
-  shell:
-    cmd: |
-      curl https://go.dev/dl/go1.22.6.linux-amd64.tar.gz
-    creates: /usr/local/go
+- name: Clone goenv repository
+  git:
+    repo: https://github.com/syndbg/goenv.git
+    dest: "{{ ansible_env.HOME }}/.goenv"
+    update: yes
 
-- name: Extract go
-  shell:
-    cmd: |
-      tar -C /usr/local -xzf go1.22.6.linux-amd64.tar.gz
-    args:
-      chdir: /usr/local
-    creates: /usr/local/go
-
-- name: Configure go in .zshrc
+- name: Ensure zshrc contains GOENV_ROOT
   lineinfile:
-    export PATH=$PATH:/usr/local/go/bin    
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    line: 'export GOENV_ROOT="$HOME/.goenv"'
+
+- name: Ensure zshrc contains goenv bin in PATH
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    line: 'export PATH="$GOENV_ROOT/bin:$PATH"'
+
+- name: Ensure zshrc contains goenv init command
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    line: 'eval "$(goenv init -)"'
+
+
+- name: Source zshrc to apply changes
+  shell: source {{ ansible_env.HOME }}/.zshrc
+  args:
+    executable: /bin/zsh
+  ignore_errors: yes  # Sourcing zshrc may not affect the current session, so ignore errors
+
+- name: Install a specific Go version
+  shell: |
+    source {{ ansible_env.HOME }}/.zshrc
+    goenv install -s {{ go_version }}
+  args:
+    executable: /bin/zsh
+
+- name: Set the installed Go version as the global default
+  shell: |
+    source {{ ansible_env.HOME }}/.zshrc
+    goenv global {{ go_version }}
+  args:
+    executable: /bin/zsh
 
