@@ -1,0 +1,46 @@
+#- name: Install pyenv dependencies on Debian
+#  package:
+#    name:  "{{ item }}"
+#  loop:
+#    - make
+#    - build-essential
+#    - libssl-dev
+#    - zlib1g-dev
+#    - libbz2-dev
+#    - libreadline-dev
+#    - libsqlite3-dev
+#    - wget
+#    - curl
+#    - llvm
+#    - libncurses5-dev
+#    - libncursesw5-dev
+#    - xz-utils
+#    - tk-dev
+#    - libffi-dev
+#    - liblzma-dev
+#    - python3-openssl
+#    - git
+
+- name: Install pyenv
+  shell: |
+    curl -k https://pyenv.run | bash
+  args:
+    creates: "{{ ansible_env.HOME }}/.pyenv"
+
+- name: Configure pyenv in .zshrc
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    line: |
+      export PATH="{{ ansible_env.HOME }}/.pyenv/bin:$PATH"
+      eval "$(pyenv init --path)"
+      eval "$(pyenv init -)"
+      eval "$(pyenv virtualenv-init -)"
+    state: present
+
+- name: Install Python {{ python_version }} using pyenv
+  shell: |
+    source ~/.zshrc
+    pyenv install {{ python_version }}
+    pyenv global {{ python_version }}
+  args:
+    creates: "{{ ansible_env.HOME }}/.pyenv/versions/{{ python_version }}"

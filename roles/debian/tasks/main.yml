@@ -1,0 +1,12 @@
+---
+- name: include role tasks
+  include_tasks: python.yml
+  when: install_python
+
+- name: include role tasks
+  include_tasks: node.yml
+  when: install_node
+
+- name: include role tasks
+  include_tasks: nvim.yml
+  when: install_nvim 

@@ -3,23 +3,23 @@
     python_version: '3.12.0'
     go_version: '1.22.6'
     node_version: '20.9.0'
-    install_go: 'true'
-    install_node: 'true'
+    install_go: 'false'
+    install_node: 'false'
     install_python: 'true'
-    install_ruby: 'true'
-    install_nvim: 'true'
+    install_ruby: 'false'
+    install_nvim: 'false'
 
   tasks:
     - name: Store current OS as variable
       set_fact:
-        os_family: "{{ ansible_os_family }}"
+        os_family: "{{ ansible_os_family | lower }}"
 
     - name: Update Apt
       become: true
       apt:
         force_apt_get: true
-      update_cache: true
-      state: present
+        update_cache: true
+        state: present
       tags:
         - install
         - core
@@ -27,4 +27,5 @@
 
     - name: Include tasks for OS
       include_role:
-      name: "{{ os_family }}"
+        name: "{{ os_family }}"
+
