@@ -1,0 +1,5 @@
+tasks:
+  - name: Install Zsh
+    package:
+      name: zsh
+      state: present

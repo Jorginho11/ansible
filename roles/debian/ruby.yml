@@ -1,0 +1,11 @@
+- block:
+  - name: Install Ruby
+    apt:
+      name: ruby-full
+      state: present
+
+  - name: Install RVM
+    command: curl -sSL https://get.rvm.io | bash -s stable
+    args:
+      creates: /usr/local/rvm
+
