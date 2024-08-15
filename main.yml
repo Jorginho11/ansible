@@ -1,15 +1,15 @@
 - hosts: localhost
   gather_facts: 'true'
   vars:
-    install_zsh: 'true'
+    install_zsh: 'false'
     python_version: '3.12.0'
     go_version: '1.22.6'
     node_version: '20.9.0'
-    install_go: 'true'
+    install_go: 'false'
     install_node: 'false'
     install_python: 'false'
     install_ruby: 'false'
-    install_nvim: 'false'
+    install_nvim: 'true'
 
   tasks:
     - name: Store current OS as variable

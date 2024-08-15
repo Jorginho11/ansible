@@ -2,20 +2,53 @@
   package:
     name: nodejs
     state: present
+  become: yes
 
 - name: Install npm
   package:
     name: npm
     state: present
+  become: yes
 
-# Use N to manage node versions and set system node versions
-- name: Install N
-  npm:
-    name: n
-    global: yes
+- name: Install prerequisites for NVM
+  apt:
+    name:
+      - curl
+      - build-essential
+      - libssl-dev
+    state: present
 
-- name: Set system node versions
-  command: n {{ node_version }}
+- name: Download and install NVM
+  shell: |
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
   args:
-    creates: /usr/local/bin/node
+    executable: /bin/zsh
+
+- name: Source NVM script and update .zshrc
+  shell: |
+    echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.zshrc
+    echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> ~/.zshrc
+    echo '[ -s "$NVM_DIR/zsh_completion" ] && \. "$NVM_DIR/bash_completion"' >> ~/.bashrc
+    source ~/.zshrc
+  args:
+    executable: /bin/zsh
+
+- name: Install the latest stable version of Node.js using NVM
+  shell: |
+    source ~/.zshrc
+    nvm install --lts
+    nvm alias default node
+  args:
+    executable: /bin/zsh
+
+- name: Ensure Node.js is available system-wide
+  shell: |
+    source ~/.zshrc
+    nvm use default
+    ln -sf "$NVM_DIR/versions/node/$(nvm version)/bin/node" /usr/bin/node
+    ln -sf "$NVM_DIR/versions/node/$(nvm version)/bin/npm" /usr/bin/npm
+    ln -sf "$NVM_DIR/versions/node/$(nvm version)/bin/npx" /usr/bin/npx
+  args:
+    executable: /bin/zsh
+  become: true
 

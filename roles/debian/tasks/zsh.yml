@@ -7,6 +7,7 @@
   user:
     name: "{{ ansible_user_id }}"
     shell: /bin/zsh
+  become: true
 
 - name: Ensure zsh is installed and set as the default shell
   shell: chsh -s /bin/zsh {{ ansible_user_id }}

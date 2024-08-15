@@ -1,28 +1,21 @@
-block:
-  - name: Install dependencies with apt
-    apt:
-      {{ item }}
-    loop:
-      - ripgrep
-      - fd-find
-      - pkg-config
-      - fonts-powerline
+- name: Install dependencies with apt
+  apt:
+    name: "{{ item }}"
+  loop:
+    - ripgrep
+    - fd-find
+    - pkg-config
+    - fonts-powerline
+    - neovim
+  become: true
 
-  - name: Ensure the Neovim configuration directory exists
-    file:
-      path: ~/.config/nvim
-      state: directory
-      mode: '0755'
 
-  - name: Copy the external config to the system
-    copy:
-      src: "{{ playbook_dir }}/.dotfiles/.config/nvim"
-      dest: ~/.config/nvim"
-      mode: '0644'
+- name: Copy the external config to the system
+  copy:
+    src: "{{ playbook_dir }}/.dotfiles/.config/nvim"
+    dest: "~/.config"
+    mode: '0755'
 
-  - name: Install Neovim plugins using Packer
-    command: nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
-    args:
-      chdir: ~/.config/nvim
+- name: Install Neovim plugins using Packer
+  command: nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
 
-when: install_nvim 
