@@ -1,0 +1,76 @@
+- name: Install hashicorp dependencies
+  apt:
+    name: "{{ item }}"
+  loop:
+    - gnupg
+    - software-properties-common
+    - curl
+  become: yes
+
+- name: Add HashiCorp GPG key for Debian/Ubuntu
+  apt_key:
+    url: "https://apt.releases.hashicorp.com/gpg"
+    state: present
+  become: yes
+
+- name: Add HashiCorp repository
+  apt_repository:
+    repo: "deb [arch=arm64] https://apt.releases.hashicorp.com bookworm main"
+    state: present
+  become: yes
+
+- name: Download Terraform
+  get_url:
+    url: "https://releases.hashicorp.com/terraform/{{ terraform_version }}/terraform_{{ terraform_version }}_linux_arm64.zip"
+    dest: "/tmp/terraform_{{ terraform_version }}_linux_arm64.zip"
+
+- name: Unzip Terraform binary
+  unarchive:
+    src: "/tmp/terraform_{{ terraform_version }}_linux_arm64.zip"
+    dest: "/usr/local/bin/"
+    remote_src: yes
+  become: yes
+
+- name: Ensure Terraform is executable
+  file:
+    path: /usr/local/bin/terraform
+    mode: '0755'
+  become: yes
+
+- name: Install hashicorp dependencies
+  apt:
+    name: "{{ item }}"
+  loop:
+    - packer
+    - terraform-ls
+  become: yes
+
+- name: Download TFLint binary
+  get_url:
+    url: "https://github.com/terraform-linters/tflint/releases/download/v{{ tflint_version }}/tflint_linux_arm64.zip"
+    dest: /tmp/tflint_linux_arm64.zip
+
+- name: Extract TFLint binary
+  unarchive:
+    src: /tmp/tflint_linux_arm64.zip
+    dest: /tmp
+    remote_src: yes
+  become: yes
+
+- name: Move TFLint binary to /usr/local/bin
+  command:
+    cmd: mv /tmp/tflint /usr/local/bin/tflint
+    creates: /usr/local/bin/tflint
+  become: yes
+
+- name: Ensure TFLint is executable
+  file:
+    path: /usr/local/bin/tflint
+    mode: '0755'
+  become: yes 
+
+- name: Add /usr/local/bin to PATH for current user
+  lineinfile:
+    path: "~/.zshrc"
+    line: 'export PATH=$PATH:/usr/local/bin'
+    create: yes

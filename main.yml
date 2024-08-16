@@ -5,11 +5,16 @@
     python_version: '3.12.0'
     go_version: '1.22.6'
     node_version: '20.9.0'
+    terraform_version: '1.9.4'
+    tflint_version: '0.52.0'
+    terraform_ls_version: '0.34.2'
     install_go: 'false'
     install_node: 'false'
     install_python: 'false'
     install_ruby: 'false'
-    install_nvim: 'true'
+    install_nvim: 'false'
+    install_terraform: 'true'
+    
 
   tasks:
     - name: Store current OS as variable

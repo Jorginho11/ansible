@@ -18,3 +18,7 @@
 - name: include golang role
   include_tasks: go.yml
   when: install_go == 'true'
+
+- name: include terraform role
+  include_tasks: terraform.yml
+  when: install_terraform == 'true'
